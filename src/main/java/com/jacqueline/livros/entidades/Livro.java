@@ -1,16 +1,17 @@
 package com.jacqueline.livros.entidades;
 
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 
 @Entity
 public class Livro 
 {
-	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+	
+	@Id
 	private Long id;
 	private String titulo;
+	@ManyToOne
 	private Autor autor; 
 	private Status status = Status.PENDENTE;
 	
@@ -19,19 +20,14 @@ public class Livro
 		super();
 		// TODO Auto-generated constructor stub
 	}
-	public Livro(Long id, String titulo, Autor autor, Status status) {
+	public Livro(String titulo, Autor autor) {
 		super();
-		this.id = id;
+		
 		this.titulo = titulo;
 		this.autor = autor;
-		this.status = status;
+		
 	}
-	public Long getId() {
-		return id;
-	}
-	public void setId(Long id) {
-		this.id = id;
-	}
+	
 	public String getTitulo() {
 		return titulo;
 	}
@@ -50,6 +46,13 @@ public class Livro
 	public void setStatus(Status status) {
 		this.status = status;
 	}
+	public Long getId() {
+		return id;
+	}
+	public void setId(Long id) {
+		this.id = id;
+	}
+	
 	
 	
 	
