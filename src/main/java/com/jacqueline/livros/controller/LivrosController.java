@@ -4,6 +4,7 @@ import java.net.URI;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.transaction.Transactional;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,13 +12,16 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import com.jacqueline.livros.controller.dto.DetalhesLivroDto;
 import com.jacqueline.livros.controller.dto.LivroDto;
+import com.jacqueline.livros.controller.form.AtualizacaoLivroForm;
 import com.jacqueline.livros.controller.form.LivroForm;
 import com.jacqueline.livros.entidades.Autor;
 import com.jacqueline.livros.entidades.Livro;
@@ -61,6 +65,26 @@ public class LivrosController
 		return ResponseEntity.created(uri).body(new LivroDto(livro));
 		
 	}
+	
+
+	@GetMapping("/{id}")
+	public DetalhesLivroDto listarLivro(@PathVariable Long id)
+	{
+		Livro livro = livroRepository.getOne(id);
+		return new DetalhesLivroDto(livro);
+	}
+	
+	@PutMapping("/{id}")
+	@Transactional
+	public ResponseEntity<LivroDto> atualizar(@PathVariable Long id, @RequestBody @Valid AtualizacaoLivroForm form )
+	{
+		Livro livro = form.atualizar(id, livroRepository);
+		return ResponseEntity.ok(new LivroDto(livro));
+		
+	}
+	
+	
+	
 	
 
 }
