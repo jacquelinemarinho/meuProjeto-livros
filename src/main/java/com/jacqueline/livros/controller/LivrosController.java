@@ -3,6 +3,7 @@ package com.jacqueline.livros.controller;
 import java.net.URI;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import javax.transaction.Transactional;
 import javax.validation.Valid;
@@ -57,6 +58,7 @@ public class LivrosController
 	}
 	
 	@PostMapping
+	@Transactional
 	public ResponseEntity<LivroDto> cadastrar(@RequestBody @Valid LivroForm form, UriComponentsBuilder uriBuilder) 
 	{
 		Livro livro = form.converter(autorRepository);
@@ -69,26 +71,44 @@ public class LivrosController
 	
 
 	@GetMapping("/{id}")
-	public DetalhesLivroDto listarUmLivro(@PathVariable Long id)
+	public ResponseEntity<DetalhesLivroDto> listarUmLivro(@PathVariable Long id)
 	{
-		Livro livro = livroRepository.getOne(id);
-		return new DetalhesLivroDto(livro);
+		Optional<Livro> livro = livroRepository.findById(id);
+		if(livro.isPresent())
+		{
+			return ResponseEntity.ok(new DetalhesLivroDto(livro.get()));
+		}
+		return ResponseEntity.notFound().build();
+		
 	}
 	
 	@PutMapping("/{id}")
 	@Transactional
 	public ResponseEntity<LivroDto> atualizar(@PathVariable Long id, @RequestBody @Valid AtualizacaoLivroForm form )
 	{
-		Livro livro = form.atualizar(id, livroRepository);
-		return ResponseEntity.ok(new LivroDto(livro));
+		Optional<Livro> optional = livroRepository.findById(id);
+		if(optional.isPresent())
+		{
+			Livro livro = form.atualizar(id, livroRepository);
+			return ResponseEntity.ok(new LivroDto(livro));
+		}
+		return ResponseEntity.notFound().build();	
 		
 	}
 	
 	@DeleteMapping("/{id}")
+	@Transactional
 	public ResponseEntity deletar(@PathVariable Long id)
 	{
-		livroRepository.deleteById(id);
-		return ResponseEntity.ok().build(); 
+		Optional<Livro> optional = livroRepository.findById(id);
+		if(optional.isPresent())
+		{
+			livroRepository.deleteById(id);
+			return ResponseEntity.ok().build();
+		}
+		return ResponseEntity.notFound().build();	
+			
+		 
 	}
 	
 	
